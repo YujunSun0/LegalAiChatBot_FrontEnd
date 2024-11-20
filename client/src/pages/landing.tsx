@@ -49,16 +49,18 @@ const [isScrolled, setIsScrolled] = useState(false);
     const targetElement = document.querySelector(href);
     
     if (targetElement) {
-      targetElement.scrollIntoView({ 
-        behavior: 'smooth',
-        block: 'start'
+      const headerHeight = 72; // 헤더의 대략적인 높이 (픽셀)
+      const elementPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
+      const offsetPosition = elementPosition - headerHeight;
+  
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
       });
     }
   };
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-    
     AOS.init({
         duration: 1000, // Animation duration
         once: false, // Whether animation should happen only once
@@ -76,9 +78,8 @@ const [isScrolled, setIsScrolled] = useState(false);
   
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      {/* Header Section */}
-      <header 
+    <>
+    <header 
         className={`
           fixed 
           top-0 
@@ -94,7 +95,11 @@ const [isScrolled, setIsScrolled] = useState(false);
       >
         <div className="container mx-auto px-6">
           <div className="flex items-center justify-between">
-            <div className="text-2xl font-bold text-blue-900">LegalAI</div>
+            <div className="text-2xl font-bold text-blue-900 cursor-pointer" 
+            onClick={() => {
+    navigate("/");
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+  }}>LegalAI</div>
             <div className="hidden md:flex space-x-8">
               {navItems.map((item) => (
                 <a
@@ -116,9 +121,11 @@ const [isScrolled, setIsScrolled] = useState(false);
           </div>
         </div>
       </header>
+    <div className="min-h-screen mt-20 bg-gradient-to-b from-gray-50 to-white">
+      {/* Header Section */}
 
       {/* Hero Section */}
-      <section className="pt-24" data-aos="fade-up" data-aos-delay="200">
+      <section id='introduce' className="pt-24" data-aos="fade-up" data-aos-delay="200">
         <div className="container mx-auto px-6 py-16 text-center md:py-24">
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
             AI 법률 상담으로<br />
@@ -354,12 +361,14 @@ const [isScrolled, setIsScrolled] = useState(false);
       </div>
     </section>
     </div>
+    </>
   );
 };
 
 export default LegalChatbotLanding;
 
 const navItems: NavItem[] = [
+    { href: '#introduce', label: '서비스 소개' },
     { href: '#feature', label: '기능' },
     { href: '#benefit', label: '장점' },
     { href: '#guide', label: '법률 분야' },
